@@ -17,6 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 client.connect(err => {
   const productCollection = client.db("redux").collection("products");
+  const userCollection = client.db("redux").collection("users");
   // perform actions on the collection object
   console.log ("database connected")
 
@@ -38,6 +39,22 @@ client.connect(err => {
       res.send (documents);
     })
   })
+
+  app.post ('/addUser', (req, res) => {
+
+    const order = req.body;
+    userCollection.insertOne (order)
+    .then (result => {
+        res.send (result.insertedCount > 0)
+    })
+   })
+
+app.get ('/users',  ( req, res ) => {
+   console.log (req.query.email);
+   userCollection.find ({ email: req.query.email })
+   .toArray (( err, documents ) => {
+       res.send (documents);
+   })
 
 });
 
